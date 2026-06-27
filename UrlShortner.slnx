@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="UrlShortner.Tests/UrlShortner.Tests.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
+  <Project Path="UrlShortner/UrlShortner.csproj" />
+</Solution>

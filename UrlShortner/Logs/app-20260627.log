@@ -1,0 +1,171 @@
+2026-06-27 09:11:36.807 +05:30 [INF] Starting UrlShortener application... {"Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:42.593 +05:30 [INF] Executed DbCommand (299ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+CREATE DATABASE [UrlShortnerDb]; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:42.716 +05:30 [INF] Executed DbCommand (96ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [UrlShortnerDb] SET READ_COMMITTED_SNAPSHOT ON;
+END; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:42.807 +05:30 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:42.839 +05:30 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long. {"EventId":{"Id":20411,"Name":"Microsoft.EntityFrameworkCore.Migrations.AcquiringMigrationLock"},"SourceContext":"Microsoft.EntityFrameworkCore.Migrations","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:42.970 +05:30 [INF] Executed DbCommand (99ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.208 +05:30 [INF] Executed DbCommand (32ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.290 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.332 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]'); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.445 +05:30 [INF] Executed DbCommand (74ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId]; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.532 +05:30 [INF] Applying migration '20260627024645_InitialCreate'. {"EventId":{"Id":20402,"Name":"Microsoft.EntityFrameworkCore.Migrations.MigrationApplying"},"SourceContext":"Microsoft.EntityFrameworkCore.Migrations","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.609 +05:30 [INF] Executed DbCommand (20ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [UrlEntries] (
+    [Id] uniqueidentifier NOT NULL,
+    [OriginalUrl] nvarchar(2048) NOT NULL,
+    [ShortCode] nvarchar(50) NOT NULL,
+    [AccessCount] int NOT NULL DEFAULT 0,
+    [CreatedAt] datetime2 NOT NULL DEFAULT (GETUTCDATE()),
+    [UpdatedAt] datetime2 NOT NULL DEFAULT (GETUTCDATE()),
+    [ExpiresAt] datetime2 NULL,
+    [CustomAlias] nvarchar(50) NULL,
+    [IsActive] bit NOT NULL DEFAULT CAST(1 AS bit),
+    CONSTRAINT [PK_UrlEntries] PRIMARY KEY ([Id])
+); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.656 +05:30 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_CreatedAt] ON [UrlEntries] ([CreatedAt]); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.694 +05:30 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_CustomAlias] ON [UrlEntries] ([CustomAlias]) WHERE [CustomAlias] IS NOT NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.718 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_ExpiresAt] ON [UrlEntries] ([ExpiresAt]); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.747 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_IsActive] ON [UrlEntries] ([IsActive]); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.778 +05:30 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_ShortCode] ON [UrlEntries] ([ShortCode]); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.855 +05:30 [INF] Executed DbCommand (45ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260627024645_InitialCreate', N'10.0.0'); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.884 +05:30 [INF] Applying migration '20260627025559_AddAnalyticsAndOwnershipFeatures'. {"EventId":{"Id":20402,"Name":"Microsoft.EntityFrameworkCore.Migrations.MigrationApplying"},"SourceContext":"Microsoft.EntityFrameworkCore.Migrations","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:43.928 +05:30 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DROP INDEX [IX_ExpiresAt] ON [UrlEntries]; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.100 +05:30 [INF] Executed DbCommand (2,151ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+EXEC sp_rename N'[UrlEntries].[AccessCount]', N'ClickCount', 'COLUMN'; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.144 +05:30 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @defaultSchema AS sysname;
+SET @defaultSchema = SCHEMA_NAME();
+DECLARE @description AS sql_variant;
+SET @description = N'Shortened URL entries with analytics';
+EXEC sp_addextendedproperty 'MS_Description', @description, 'SCHEMA', @defaultSchema, 'TABLE', N'UrlEntries'; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.190 +05:30 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [UrlEntries] ADD [Description] nvarchar(500) NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.240 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [UrlEntries] ADD [LastVisited] datetime2 NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.272 +05:30 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [UrlEntries] ADD [OwnerId] nvarchar(128) NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.293 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_Active_Expiration] ON [UrlEntries] ([IsActive], [ExpiresAt]) WHERE [IsActive] = 1; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.313 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_ClickCount] ON [UrlEntries] ([ClickCount] DESC); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.343 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_ExpiresAt] ON [UrlEntries] ([ExpiresAt]) WHERE [ExpiresAt] IS NOT NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.367 +05:30 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_LastVisited] ON [UrlEntries] ([LastVisited]) WHERE [LastVisited] IS NOT NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.408 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_Owner_Active_Created] ON [UrlEntries] ([OwnerId], [IsActive], [CreatedAt] DESC); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.446 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_OwnerId] ON [UrlEntries] ([OwnerId]) WHERE [OwnerId] IS NOT NULL; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.488 +05:30 [INF] Executed DbCommand (25ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260627025559_AddAnalyticsAndOwnershipFeatures', N'10.0.0'); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.543 +05:30 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.567 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.675 +05:30 [INF] Executed DbCommand (88ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+
+IF EXISTS
+    (SELECT *
+     FROM [sys].[objects] o
+     WHERE [o].[type] = 'U'
+     AND [o].[is_ms_shipped] = 0
+     AND [o].[object_id] NOT IN (SELECT [ep].[major_id]
+        FROM [sys].[extended_properties] AS [ep]
+        WHERE [ep].[minor_id] = 0
+            AND [ep].[class] = 1
+            AND [ep].[name] = N'microsoft_database_tools_support'
+    )
+)
+SELECT 1 ELSE SELECT 0 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:46.696 +05:30 [INF] Database migration and initialization completed successfully {"Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:47.986 +05:30 [INF] Now listening on: https://localhost:7254 {"EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:48.008 +05:30 [INF] Now listening on: http://localhost:5281 {"EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:48.270 +05:30 [INF] Application started. Press Ctrl+C to shut down. {"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:48.280 +05:30 [INF] Hosting environment: Development {"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:11:48.302 +05:30 [INF] Content root path: C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner {"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:18.280 +05:30 [INF] Starting UrlShortener application... {"Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:19.799 +05:30 [INF] Executed DbCommand (44ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:19.826 +05:30 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long. {"EventId":{"Id":20411,"Name":"Microsoft.EntityFrameworkCore.Migrations.AcquiringMigrationLock"},"SourceContext":"Microsoft.EntityFrameworkCore.Migrations","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:19.868 +05:30 [INF] Executed DbCommand (29ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:19.945 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:19.972 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:19.983 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]'); {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.014 +05:30 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId]; {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.037 +05:30 [INF] No migrations were applied. The database is already up to date. {"EventId":{"Id":20405,"Name":"Microsoft.EntityFrameworkCore.Migrations.MigrationsNotApplied"},"SourceContext":"Microsoft.EntityFrameworkCore.Migrations","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.052 +05:30 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.066 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.115 +05:30 [INF] Executed DbCommand (38ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+
+IF EXISTS
+    (SELECT *
+     FROM [sys].[objects] o
+     WHERE [o].[type] = 'U'
+     AND [o].[is_ms_shipped] = 0
+     AND [o].[object_id] NOT IN (SELECT [ep].[major_id]
+        FROM [sys].[extended_properties] AS [ep]
+        WHERE [ep].[minor_id] = 0
+            AND [ep].[class] = 1
+            AND [ep].[name] = N'microsoft_database_tools_support'
+    )
+)
+SELECT 1 ELSE SELECT 0 {"EventId":{"Id":20101,"Name":"Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted"},"SourceContext":"Microsoft.EntityFrameworkCore.Database.Command","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.130 +05:30 [INF] Database migration and initialization completed successfully {"Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.540 +05:30 [INF] Now listening on: https://localhost:7254 {"EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.558 +05:30 [INF] Now listening on: http://localhost:5281 {"EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.942 +05:30 [INF] Application started. Press Ctrl+C to shut down. {"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.954 +05:30 [INF] Hosting environment: Development {"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 09:17:20.961 +05:30 [INF] Content root path: C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner {"SourceContext":"Microsoft.Hosting.Lifetime","Application":"UrlShortener","Environment":"Development"}

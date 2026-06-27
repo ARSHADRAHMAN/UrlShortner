@@ -1,0 +1,6 @@
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner.Tests\bin\Debug\net10.0\.msCoverageSourceRootsMapping_UrlShortner.Tests
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner.Tests\obj\Debug\net10.0\UrlShortner.Tests.csproj.AssemblyReference.cache
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner.Tests\obj\Debug\net10.0\UrlShortner.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner.Tests\obj\Debug\net10.0\UrlShortner.Tests.AssemblyInfoInputs.cache
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner.Tests\obj\Debug\net10.0\UrlShortner.Tests.AssemblyInfo.cs
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner.Tests\obj\Debug\net10.0\UrlShortner.Tests.csproj.CoreCompileInputs.cache
