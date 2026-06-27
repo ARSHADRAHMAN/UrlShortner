@@ -25,7 +25,7 @@ A production-ready URL Shortener API built with ASP.NET Core 10.0, following **S
   - Entity Framework Core with migrations
   - Automatic database initialization
 
-✅ **Unit & Integration Tests** - 62 passing tests using xUnit, Moq, and SQLite in-memory databases  
+✅ **Unit & Integration Tests** - 63 passing tests using xUnit, Moq, and SQLite in-memory databases  
 ✅ **Access Tracking** - Track URL access count
 
 ## Project Structure
@@ -164,7 +164,8 @@ Content-Type: application/json
   "originalUrl": "https://www.example.com/very/long/url",
   "shortCode": "ghmdot",
   "shortUrl": "https://short.url/ghmdot",
-  "accessCount": 0,
+  "clickCount": 0,
+  "lastVisited": null,
   "createdAt": "2026-06-27T10:30:00Z",
   "updatedAt": "2026-06-27T10:30:00Z",
   "isActive": true

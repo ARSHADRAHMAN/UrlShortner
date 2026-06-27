@@ -103,7 +103,10 @@ try
             // Ensure database is created
             await dbContext.Database.EnsureCreatedAsync();
 
-            Log.Information("Database migration and initialization completed successfully");
+            // Seed the database with sample data
+            await DbInitializer.InitializeAsync(dbContext);
+
+            Log.Information("Database migration, initialization, and seeding completed successfully");
         }
         catch (Exception ex)
         {
