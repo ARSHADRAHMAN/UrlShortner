@@ -35,48 +35,40 @@ public static class DbInitializer
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://www.github.com/Microsoft/dotnet",
                 ShortCode = "ghmdot",
-                CustomAlias = "github-dotnet",
                 ClickCount = 42,
                 CreatedAt = DateTime.UtcNow.AddDays(-30),
                 UpdatedAt = DateTime.UtcNow.AddDays(-30),
-                IsActive = true,
-                ExpiresAt = null
+                IsActive = true
             },
             new UrlShortenerEntry
             {
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10",
                 ShortCode = "msdn10",
-                CustomAlias = "learn-dotnet10",
                 ClickCount = 28,
                 CreatedAt = DateTime.UtcNow.AddDays(-15),
                 UpdatedAt = DateTime.UtcNow.AddDays(-15),
-                IsActive = true,
-                ExpiresAt = null
+                IsActive = true
             },
             new UrlShortenerEntry
             {
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://github.com/dotnet/aspnetcore",
                 ShortCode = "aspnet",
-                CustomAlias = "aspnetcore",
                 ClickCount = 156,
                 CreatedAt = DateTime.UtcNow.AddDays(-60),
                 UpdatedAt = DateTime.UtcNow.AddDays(-5),
-                IsActive = true,
-                ExpiresAt = null
+                IsActive = true
             },
             new UrlShortenerEntry
             {
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://www.example.com/very/long/and/complex/url/that/needs/shortening",
                 ShortCode = "tmpurl",
-                CustomAlias = null,
                 ClickCount = 3,
                 CreatedAt = DateTime.UtcNow.AddHours(-2),
                 UpdatedAt = DateTime.UtcNow.AddHours(-2),
-                IsActive = true,
-                ExpiresAt = DateTime.UtcNow.AddDays(7) // Expires in 7 days
+                IsActive = true
             }
         };
 

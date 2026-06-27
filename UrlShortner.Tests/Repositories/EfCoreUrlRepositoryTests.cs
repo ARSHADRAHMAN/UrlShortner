@@ -14,14 +14,14 @@ public class EfCoreUrlRepositoryTests
 {
     private UrlShortenerDbContext GetDbContext()
     {
+        var connection = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+        connection.Open();
+
         var options = new DbContextOptionsBuilder<UrlShortenerDbContext>()
-            .UseSqlite("Data Source=:memory:")
+            .UseSqlite(connection)
             .Options;
 
-        var context = new UrlShortenerDbContext(options)
-        {
-            UrlEntries = null!  // Will be initialized by DbContext
-        };
+        var context = new UrlShortenerDbContext(options);
         context.Database.EnsureCreated();
         return context;
     }
@@ -167,47 +167,7 @@ public class EfCoreUrlRepositoryTests
 
     #endregion
 
-    #region GetByCustomAliasAsync Tests
 
-    [Fact]
-    public async Task GetByCustomAliasAsync_WithValidAlias_ShouldReturnEntry()
-    {
-        // Arrange
-        using var context = GetDbContext();
-        var repository = new EfCoreUrlRepository(context);
-
-        var alias = "myalias";
-        var entry = new UrlShortenerEntry
-        {
-            OriginalUrl = "https://www.example.com",
-            ShortCode = "code1",
-            CustomAlias = alias
-        };
-        await repository.CreateAsync(entry);
-
-        // Act
-        var result = await repository.GetByCustomAliasAsync(alias);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(alias, result.CustomAlias);
-    }
-
-    [Fact]
-    public async Task GetByCustomAliasAsync_WithInvalidAlias_ShouldReturnNull()
-    {
-        // Arrange
-        using var context = GetDbContext();
-        var repository = new EfCoreUrlRepository(context);
-
-        // Act
-        var result = await repository.GetByCustomAliasAsync("nonexistent");
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    #endregion
 
     #region GetAllAsync Tests
 
@@ -466,33 +426,7 @@ public class EfCoreUrlRepositoryTests
             () => repository.CreateAsync(entry2));
     }
 
-    [Fact]
-    public async Task CreateAsync_WithDuplicateCustomAlias_ShouldThrow()
-    {
-        // Arrange
-        using var context = GetDbContext();
-        var repository = new EfCoreUrlRepository(context);
 
-        var alias = "duplicate";
-        var entry1 = new UrlShortenerEntry
-        {
-            OriginalUrl = "https://www.example1.com",
-            ShortCode = "code1",
-            CustomAlias = alias
-        };
-        var entry2 = new UrlShortenerEntry
-        {
-            OriginalUrl = "https://www.example2.com",
-            ShortCode = "code2",
-            CustomAlias = alias
-        };
-
-        await repository.CreateAsync(entry1);
-
-        // Act & Assert - Should throw DbUpdateException due to unique constraint
-        await Assert.ThrowsAsync<DbUpdateException>(
-            () => repository.CreateAsync(entry2));
-    }
 
     #endregion
 }

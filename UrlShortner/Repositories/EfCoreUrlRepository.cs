@@ -54,15 +54,17 @@ public class EfCoreUrlRepository : IUrlRepository
             .ConfigureAwait(false);
     }
 
-    public async Task<UrlShortenerEntry?> GetByCustomAliasAsync(string customAlias, CancellationToken cancellationToken = default)
+    public async Task<UrlShortenerEntry?> GetByOriginalUrlAsync(string originalUrl, CancellationToken cancellationToken = default)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(customAlias);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalUrl);
 
         return await _dbContext.UrlEntries
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.CustomAlias == customAlias, cancellationToken)
+            .FirstOrDefaultAsync(x => x.OriginalUrl == originalUrl, cancellationToken)
             .ConfigureAwait(false);
     }
+
+
 
     public async Task<(List<UrlShortenerEntry> Items, int TotalCount)> GetAllAsync(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
     {
@@ -102,7 +104,8 @@ public class EfCoreUrlRepository : IUrlRepository
 
         // Update only allowed fields
         existingEntry.OriginalUrl = entry.OriginalUrl;
-        existingEntry.ExpiresAt = entry.ExpiresAt;
+        existingEntry.ClickCount = entry.ClickCount;
+        existingEntry.LastVisited = entry.LastVisited;
         existingEntry.UpdatedAt = DateTime.UtcNow;
         existingEntry.IsActive = entry.IsActive;
 

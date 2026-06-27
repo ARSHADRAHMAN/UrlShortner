@@ -13,12 +13,12 @@ public class UrlRepository : IUrlRepository
     /// In-memory collection to store URL entries
     /// In production, this would be replaced with a database
     /// </summary>
-    private static readonly List<UrlShortenerEntry> _urlEntries = [];
+    private readonly List<UrlShortenerEntry> _urlEntries = [];
 
     /// <summary>
     /// Lock object for thread-safe operations in multi-threaded environment
     /// </summary>
-    private static readonly object _lockObject = new();
+    private readonly object _lockObject = new();
 
     public async Task<UrlShortenerEntry> CreateAsync(UrlShortenerEntry entry, CancellationToken cancellationToken = default)
     {
@@ -62,18 +62,18 @@ public class UrlRepository : IUrlRepository
         }
     }
 
-    public async Task<UrlShortenerEntry?> GetByCustomAliasAsync(string customAlias, CancellationToken cancellationToken = default)
+    public async Task<UrlShortenerEntry?> GetByOriginalUrlAsync(string originalUrl, CancellationToken cancellationToken = default)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(customAlias);
-
-        // Simulate async operation
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalUrl);
         await Task.Delay(0, cancellationToken).ConfigureAwait(false);
 
         lock (_lockObject)
         {
-            return _urlEntries.FirstOrDefault(x => x.CustomAlias == customAlias);
+            return _urlEntries.FirstOrDefault(x => x.OriginalUrl == originalUrl);
         }
     }
+
+
 
     public async Task<(List<UrlShortenerEntry> Items, int TotalCount)> GetAllAsync(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
     {
@@ -109,7 +109,8 @@ public class UrlRepository : IUrlRepository
             }
 
             existingEntry.OriginalUrl = entry.OriginalUrl;
-            existingEntry.ExpiresAt = entry.ExpiresAt;
+            existingEntry.ClickCount = entry.ClickCount;
+            existingEntry.LastVisited = entry.LastVisited;
             existingEntry.UpdatedAt = DateTime.UtcNow;
             existingEntry.IsActive = entry.IsActive;
 

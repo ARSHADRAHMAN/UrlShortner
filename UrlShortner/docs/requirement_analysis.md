@@ -23,12 +23,10 @@ The system shall allow users to submit a long URL and generate a unique shortene
 ### Input
 
 * Original URL
-* Optional Custom Alias
-* Optional Expiration Date
 
 ### Output
 
-* Generated Short Code or Custom Alias
+* Generated Short Code
 * Complete Shortened URL
 * Analytics metadata (CreatedAt, ClickCount, etc.)
 
@@ -42,8 +40,7 @@ Additional behavior:
 
 * Increment click count via domain method `RecordClick()`
 * Update last accessed timestamp (`LastVisited`)
-* Return 404 if URL is inactive or expired
-* Support both short codes and custom aliases
+* Return 404 if URL is inactive
 
 ---
 
@@ -54,12 +51,11 @@ The system shall expose analytics for each shortened URL.
 Analytics include:
 
 * Original URL
-* Short Code or Custom Alias
+* Short Code
 * Total Click Count (`ClickCount`)
 * Last Visited Timestamp (`LastVisited`)
 * Created Date (`CreatedAt`)
 * Updated Date (`UpdatedAt`)
-* Expiration Date (if applicable)
 * Owner information (`OwnerId`)
 * Description (`Description`)
 * Active status (`IsActive`)
@@ -199,17 +195,24 @@ Future enhancements:
 # Requirement Ambiguities (Resolved)
 
 Several requirements were intentionally open-ended and required engineering decisions.
+# Requirement Ambiguities
 
-| Question                                            | Engineering Decision                                                                                            |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Should duplicate URLs generate the same short code? | No. Every request generates a new short code.                                                                   |
-| Should URLs expire?                                 | Supported through an optional ExpiresAt field. Checked via domain method `IsExpired`.                            |
-| Can users customize aliases?                        | Yes! CustomAlias property supported alongside auto-generated ShortCode.                                          |
-| Should analytics be public?                         | Prototype exposes analytics without authentication. Production recommends JWT authorization (future).           |
-| Should deleted URLs be permanently removed?         | Soft delete via `IsActive` flag and `Deactivate()` domain method for easier recovery.                           |
-| How long should short codes be?                     | Six-character alphanumeric code (base62 encoding supported).                                                     |
-| What happens when a short code already exists?      | Generate a new code and retry until a unique code is found.                                                     |
-| How should analytics clicks be recorded?            | Via domain method `RecordClick()` which updates ClickCount and LastVisited atomically.                          |
+Several requirements were open-ended and resolved through MVP engineering planning assumptions:
+
+| ID | Ambiguity | Clarification Needed | Assumption (if not clarified) |
+| :--- | :--- | :--- | :--- |
+| **RA-1** | Short code generation strategy | Should the short code be random, sequential, hashed, or user-defined? | Generate a random 6-character alphanumeric code. |
+| **RA-2** | Short code length | Should the length be fixed or configurable? | Use a fixed length of 6 characters. |
+| **RA-3** | Duplicate URLs | Should the same original URL return the existing short URL or create a new one? | Return the existing short URL if it already exists. |
+| **RA-4** | URL expiration | Should shortened URLs expire? If yes, after how long? | URLs do not expire in the MVP. |
+| **RA-5** | Analytics scope | Should analytics include only click count or also IP address, browser, device, location, and timestamps? | Store only the total click count. |
+| **RA-6** | Redirect behavior | Should the service use HTTP 301 (Permanent) or HTTP 302 (Temporary) redirects? | Use HTTP 302 redirects. |
+| **RA-7** | Authentication | Should the APIs be public or require authentication? | APIs are public for the MVP. |
+| **RA-8** | Rate limiting | Should requests be rate-limited to prevent abuse? | Configured via ASP.NET Core rate limiting. |
+| **RA-9** | Database technology | Which database should be used? | Local SQL Server (development LocalDB instance). |
+| **RA-10** | Caching | Is caching required for faster redirects? | Not implemented in the MVP; architecture allows future Redis integration. |
+| **RA-11** | Analytics retention | How long should analytics data be retained? | Retain analytics for the lifetime of the shortened URL. |
+| **RA-12** | Scalability requirements | What is the expected traffic volume and concurrency and rate limiting? | Design the application to be scalable, but optimize for a prototype implementation. |
 
 ---
 
@@ -227,6 +230,8 @@ The following assumptions are made due to incomplete business requirements:
 * The system is intended as a REST API (future: Web UI possible).
 * Logs are stored in file system (future: centralized log aggregation).
 * Single application instance (future: distributed tracing for multi-instance).
+* If a custom alias is requested, it is validated for uniqueness (deferred to future if custom alias is fully disabled).
+* Redirects use HTTP 302 redirects.
 
 ---
 
@@ -235,11 +240,11 @@ The following assumptions are made due to incomplete business requirements:
 | Risk                             | Mitigation                                                              | Status       |
 | -------------------------------- | ----------------------------------------------------------------------- | ------------ |
 | Short code collision             | Database unique constraint + collision detection in service             | ✅ Resolved  |
-| Invalid URLs                     | Input validation using FluentValidation                                 | ✅ Resolved  |
+| Invalid URLs                     | Input validation using DataAnnotations                                  | ✅ Resolved  |
 | Database failures                | Global exception middleware + structured logging with Correlation ID    | ✅ Resolved  |
-| Abuse through excessive requests | ASP.NET Core Rate Limiting (future implementation)                      | 📋 Planned   |
+| Abuse through excessive requests | ASP.NET Core Rate Limiting (fully configured)                            | ✅ Resolved  |
 | Concurrent updates               | Database constraints + optimistic handling + domain methods             | ✅ Resolved  |
-| Broken redirects                 | Validate URL before persistence + IsActive/IsExpired checks             | ✅ Resolved  |
+| Broken redirects                 | Validate URL before persistence + IsActive checks                       | ✅ Resolved  |
 | Large traffic volumes            | Future Redis cache support + database indexing                          | 📋 Planned   |
 | Unhandled exceptions             | Global exception middleware catching all unhandled errors               | ✅ Resolved  |
 | Lost request context             | Correlation ID propagated through all logs and responses                | ✅ Resolved  |
@@ -276,7 +281,7 @@ Infrastructure Layer (Repositories, DbContext, External Services)
 * **Database Options**: SQL Server (default) or SQLite (development)
 * **Migrations**: Fluent API configuration with automatic migration creation
 * **Indexing**: Composite indexes on `(ShortCode, IsActive)` for performance
-* **Domain Methods**: `RecordClick()`, `IsExpired`, `Deactivate()`, `Reactivate()`
+* **Domain Methods**: `RecordClick()`, `Deactivate()`, `Reactivate()`
 
 ---
 
@@ -301,7 +306,6 @@ Infrastructure Layer (Repositories, DbContext, External Services)
 
 ## 📋 Future Enhancements
 
-- [ ] Rate limiting (ASP.NET Core built-in)
 - [ ] JWT Authentication
 - [ ] Role-based Authorization
 - [ ] Multi-tenant support

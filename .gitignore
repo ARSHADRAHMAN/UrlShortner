@@ -1,1 +1,25 @@
-.vs
+## Build folders
+bin/
+obj/
+
+## Visual Studio / Rider / VS Code files
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Log files
+*.log
+UrlShortner/Logs/
+
+## Database / local storage
+*.db
+*.db-shm
+*.db-wal

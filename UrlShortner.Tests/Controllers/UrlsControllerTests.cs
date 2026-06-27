@@ -56,28 +56,7 @@ public class UrlsControllerTests
         _mockService.Verify(s => s.CreateShortUrlAsync(request, default), Times.Once);
     }
 
-    [Fact]
-    public async Task CreateShortUrl_WithConflictingAlias_ShouldReturnConflict()
-    {
-        // Arrange
-        var request = new CreateUrlRequest
-        {
-            OriginalUrl = "https://www.example.com",
-            CustomAlias = "existing"
-        };
 
-        _mockService
-            .Setup(s => s.CreateShortUrlAsync(request, default))
-            .ThrowsAsync(new InvalidOperationException("Custom alias already in use"));
-
-        // Act
-        var result = await _controller.CreateShortUrl(request);
-
-        // Assert
-        Assert.NotNull(result);
-        var conflictResult = Assert.IsType<ConflictObjectResult>(result);
-        Assert.Equal(StatusCodes.Status409Conflict, conflictResult.StatusCode);
-    }
 
     [Fact]
     public async Task CreateShortUrl_WithServiceException_ShouldReturnInternalServerError()
@@ -210,53 +189,7 @@ public class UrlsControllerTests
 
     #endregion
 
-    #region GetUrlByCustomAlias Tests
 
-    [Fact]
-    public async Task GetUrlByCustomAlias_WithValidAlias_ShouldReturnOk()
-    {
-        // Arrange
-        var alias = "myalias";
-        var response = new UrlShortenerResponse
-        {
-            Id = Guid.NewGuid(),
-            OriginalUrl = "https://www.example.com",
-            CustomAlias = alias,
-            ShortCode = "test123"
-        };
-
-        _mockService
-            .Setup(s => s.GetUrlByCustomAliasAsync(alias, default))
-            .ReturnsAsync(response);
-
-        // Act
-        var result = await _controller.GetUrlByCustomAlias(alias);
-
-        // Assert
-        Assert.NotNull(result);
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetUrlByCustomAlias_WithInvalidAlias_ShouldReturnNotFound()
-    {
-        // Arrange
-        var alias = "nonexistent";
-        _mockService
-            .Setup(s => s.GetUrlByCustomAliasAsync(alias, default))
-            .ReturnsAsync((UrlShortenerResponse?)null);
-
-        // Act
-        var result = await _controller.GetUrlByCustomAlias(alias);
-
-        // Assert
-        Assert.NotNull(result);
-        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal(StatusCodes.Status404NotFound, notFoundResult.StatusCode);
-    }
-
-    #endregion
 
     #region GetAllUrls Tests
 

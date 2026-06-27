@@ -46,24 +46,9 @@ public class UrlShortenerResponse
     public DateTime UpdatedAt { get; set; }
 
     /// <summary>
-    /// Optional expiration date
-    /// </summary>
-    public DateTime? ExpiresAt { get; set; }
-
-    /// <summary>
-    /// Custom alias if provided
-    /// </summary>
-    public string? CustomAlias { get; set; }
-
-    /// <summary>
     /// Whether this entry is active
     /// </summary>
     public bool IsActive { get; set; }
-
-    /// <summary>
-    /// Whether this entry has expired
-    /// </summary>
-    public bool IsExpired => ExpiresAt.HasValue && ExpiresAt < DateTime.UtcNow;
 }
 
 /// <summary>

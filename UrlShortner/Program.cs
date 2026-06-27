@@ -5,6 +5,8 @@ using UrlShortner.Data;
 using UrlShortner.Middleware;
 using UrlShortner.Repositories;
 using UrlShortner.Services;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +69,19 @@ try
     // Add Serilog logging
     builder.Services.AddSerilogLogging();
 
+    // Add rate limiting services
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+        options.AddFixedWindowLimiter(policyName: "fixed", opt =>
+        {
+            opt.PermitLimit = 100;
+            opt.Window = TimeSpan.FromMinutes(1);
+            opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            opt.QueueLimit = 2;
+        });
+    });
+
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
 
@@ -103,13 +118,20 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/openapi/v1.json", "UrlShortener API v1");
+            options.RoutePrefix = "swagger";
+        });
     }
 
     app.UseHttpsRedirection();
 
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.UseRateLimiter();
+
+    app.MapControllers().RequireRateLimiting("fixed");
 
     app.Run();
 }

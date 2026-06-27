@@ -17,7 +17,7 @@ public class UrlShortenerDbContext : DbContext
     /// <summary>
     /// DbSet for URL shortener entries
     /// </summary>
-    public required DbSet<UrlShortenerEntry> UrlEntries { get; set; }
+    public DbSet<UrlShortenerEntry> UrlEntries { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,8 +42,6 @@ public class UrlShortenerDbContext : DbContext
             .IsRequired()
             .HasMaxLength(50);
 
-        urlEntry.Property(x => x.CustomAlias)
-            .HasMaxLength(50);
 
         urlEntry.Property(x => x.Description)
             .HasMaxLength(500);
@@ -67,9 +65,7 @@ public class UrlShortenerDbContext : DbContext
             .IsRequired()
             .HasDefaultValue(true);
 
-        // Column configuration for nullable DateTime
-        urlEntry.Property(x => x.ExpiresAt)
-            .HasColumnType("datetime2");
+
 
         urlEntry.Property(x => x.LastVisited)
             .HasColumnType("datetime2");
@@ -79,19 +75,14 @@ public class UrlShortenerDbContext : DbContext
             .IsUnique()
             .HasDatabaseName("IX_ShortCode");
 
-        urlEntry.HasIndex(x => x.CustomAlias)
-            .IsUnique()
-            .HasFilter("[CustomAlias] IS NOT NULL")
-            .HasDatabaseName("IX_CustomAlias");
+
 
         // Performance Indexes for filtering and sorting
         urlEntry.HasIndex(x => x.CreatedAt)
             .HasDatabaseName("IX_CreatedAt")
             .IsDescending(false);
 
-        urlEntry.HasIndex(x => x.ExpiresAt)
-            .HasFilter("[ExpiresAt] IS NOT NULL")
-            .HasDatabaseName("IX_ExpiresAt");
+
 
         urlEntry.HasIndex(x => x.IsActive)
             .HasDatabaseName("IX_IsActive");
@@ -113,10 +104,7 @@ public class UrlShortenerDbContext : DbContext
             .HasDatabaseName("IX_Owner_Active_Created")
             .IsDescending(false, false, true); // Descending on CreatedAt for newest first
 
-        urlEntry.HasIndex(x => new { x.IsActive, x.ExpiresAt })
-            .HasFilter("[IsActive] = 1")
-            .HasDatabaseName("IX_Active_Expiration")
-            .IsDescending(false, false);
+
 
         // Configure table name
         urlEntry.ToTable("UrlEntries", t => t.HasComment("Shortened URL entries with analytics"));

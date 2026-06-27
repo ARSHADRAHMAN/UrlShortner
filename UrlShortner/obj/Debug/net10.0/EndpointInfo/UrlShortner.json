@@ -367,55 +367,6 @@
           }
         }
       }
-    },
-    "/api/Urls/alias/{customAlias}": {
-      "get": {
-        "tags": [
-          "Urls"
-        ],
-        "parameters": [
-          {
-            "name": "customAlias",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UrlShortenerResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -431,22 +382,6 @@
             "minLength": 10,
             "type": "string",
             "format": "uri"
-          },
-          "customAlias": {
-            "maxLength": 50,
-            "minLength": 3,
-            "pattern": "^[a-zA-Z0-9_-]+$",
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "expiresAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
           }
         }
       },
@@ -545,13 +480,6 @@
             "minLength": 10,
             "type": "string",
             "format": "uri"
-          },
-          "expiresAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
           }
         }
       },
@@ -601,23 +529,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiresAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "customAlias": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "isActive": {
-            "type": "boolean"
-          },
-          "isExpired": {
             "type": "boolean"
           }
         }

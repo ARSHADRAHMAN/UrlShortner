@@ -35,13 +35,7 @@ public interface IUrlShortenerService
     /// <returns>The URL response if found; otherwise null</returns>
     Task<UrlShortenerResponse?> GetUrlByShortCodeAsync(string shortCode, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Retrieve URL by custom alias
-    /// </summary>
-    /// <param name="customAlias">The custom alias</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The URL response if found; otherwise null</returns>
-    Task<UrlShortenerResponse?> GetUrlByCustomAliasAsync(string customAlias, CancellationToken cancellationToken = default);
+
 
     /// <summary>
     /// Get all URLs with pagination
@@ -89,20 +83,14 @@ public class UrlShortenerService : IUrlShortenerService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // Check if custom alias is provided and already exists
-        if (!string.IsNullOrWhiteSpace(request.CustomAlias))
+        // Check if the original URL already exists
+        var existingEntry = await _repository.GetByOriginalUrlAsync(request.OriginalUrl, cancellationToken).ConfigureAwait(false);
+        if (existingEntry != null && existingEntry.IsActive)
         {
-            var existingAlias = await _repository.GetByCustomAliasAsync(request.CustomAlias, cancellationToken).ConfigureAwait(false);
-            if (existingAlias != null)
-            {
-                throw new InvalidOperationException($"Custom alias '{request.CustomAlias}' is already in use");
-            }
+            return MapToResponse(existingEntry);
         }
 
-        // Generate or use custom alias as short code
-        string shortCode = !string.IsNullOrWhiteSpace(request.CustomAlias)
-            ? request.CustomAlias
-            : GenerateShortCode();
+        string shortCode = GenerateShortCode();
 
         // Ensure short code is unique
         while (await _repository.ShortCodeExistsAsync(shortCode, cancellationToken).ConfigureAwait(false))
@@ -114,8 +102,6 @@ public class UrlShortenerService : IUrlShortenerService
         {
             OriginalUrl = request.OriginalUrl,
             ShortCode = shortCode,
-            CustomAlias = request.CustomAlias,
-            ExpiresAt = request.ExpiresAt,
             ClickCount = 0,
             IsActive = true
         };
@@ -134,12 +120,6 @@ public class UrlShortenerService : IUrlShortenerService
             return null;
         }
 
-        // Check if URL has expired
-        if (entry.IsExpired)
-        {
-            return null;
-        }
-
         return MapToResponse(entry);
     }
 
@@ -150,36 +130,6 @@ public class UrlShortenerService : IUrlShortenerService
         var entry = await _repository.GetByShortCodeAsync(shortCode, cancellationToken).ConfigureAwait(false);
 
         if (entry == null || !entry.IsActive)
-        {
-            return null;
-        }
-
-        // Check if URL has expired
-        if (entry.IsExpired)
-        {
-            return null;
-        }
-
-        // Record the click - domain method handles incrementing and timestamp
-        entry.RecordClick();
-        await _repository.UpdateAsync(entry, cancellationToken).ConfigureAwait(false);
-
-        return MapToResponse(entry);
-    }
-
-    public async Task<UrlShortenerResponse?> GetUrlByCustomAliasAsync(string customAlias, CancellationToken cancellationToken = default)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(customAlias);
-
-        var entry = await _repository.GetByCustomAliasAsync(customAlias, cancellationToken).ConfigureAwait(false);
-
-        if (entry == null || !entry.IsActive)
-        {
-            return null;
-        }
-
-        // Check if URL has expired
-        if (entry.IsExpired)
         {
             return null;
         }
@@ -202,7 +152,7 @@ public class UrlShortenerService : IUrlShortenerService
         var (entries, totalCount) = await _repository.GetAllAsync(pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
 
         var responses = entries
-            .Where(x => x.IsActive && !x.IsExpired)
+            .Where(x => x.IsActive)
             .Select(MapToResponse)
             .ToList();
 
@@ -228,7 +178,6 @@ public class UrlShortenerService : IUrlShortenerService
 
         // Update fields
         entry.OriginalUrl = request.OriginalUrl;
-        entry.ExpiresAt = request.ExpiresAt;
 
         var updatedEntry = await _repository.UpdateAsync(entry, cancellationToken).ConfigureAwait(false);
 
@@ -269,11 +218,9 @@ public class UrlShortenerService : IUrlShortenerService
             OriginalUrl = entry.OriginalUrl,
             ShortCode = entry.ShortCode,
             ClickCount = entry.ClickCount,
-                LastVisited = entry.LastVisited,
+            LastVisited = entry.LastVisited,
             CreatedAt = entry.CreatedAt,
             UpdatedAt = entry.UpdatedAt,
-            ExpiresAt = entry.ExpiresAt,
-            CustomAlias = entry.CustomAlias,
             IsActive = entry.IsActive
         };
     }

@@ -44,17 +44,7 @@ public class UrlShortenerEntry
     /// </summary>
     public DateTime UpdatedAt { get; set; }
 
-    /// <summary>
-    /// Optional expiration date for the short URL
-    /// Null means no expiration
-    /// </summary>
-    public DateTime? ExpiresAt { get; set; }
 
-    /// <summary>
-    /// Custom alias provided by user (optional)
-    /// Must be unique if provided
-    /// </summary>
-    public string? CustomAlias { get; set; }
 
     /// <summary>
     /// Whether this entry is active/enabled
@@ -75,14 +65,9 @@ public class UrlShortenerEntry
     // Computed properties
 
     /// <summary>
-    /// Whether this entry has expired based on ExpiresAt date
+    /// Whether this URL is accessible (active, and not soft-deleted)
     /// </summary>
-    public bool IsExpired => ExpiresAt.HasValue && ExpiresAt < DateTime.UtcNow;
-
-    /// <summary>
-    /// Whether this URL is accessible (not expired, active, and not soft-deleted)
-    /// </summary>
-    public bool IsAccessible => IsActive && !IsExpired;
+    public bool IsAccessible => IsActive;
 
     /// <summary>
     /// Age of this shortened URL in days
@@ -130,15 +115,7 @@ public class UrlShortenerEntry
         UpdatedAt = DateTime.UtcNow;
     }
 
-    /// <summary>
-    /// Update the expiration date
-    /// </summary>
-    /// <param name="newExpirationDate">New expiration date, or null to remove expiration</param>
-    public void SetExpiration(DateTime? newExpirationDate)
-    {
-        ExpiresAt = newExpirationDate;
-        UpdatedAt = DateTime.UtcNow;
-    }
+
 
     /// <summary>
     /// Update the original URL

@@ -18,17 +18,25 @@ namespace UrlShortner.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OriginalUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                     ShortCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    AccessCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    ClickCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    LastVisited = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CustomAlias = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    OwnerId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UrlEntries", x => x.Id);
-                });
+                },
+                comment: "Shortened URL entries with analytics");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClickCount",
+                table: "UrlEntries",
+                column: "ClickCount",
+                descending: new bool[0]);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CreatedAt",
@@ -36,21 +44,27 @@ namespace UrlShortner.Data.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomAlias",
-                table: "UrlEntries",
-                column: "CustomAlias",
-                unique: true,
-                filter: "[CustomAlias] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExpiresAt",
-                table: "UrlEntries",
-                column: "ExpiresAt");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_IsActive",
                 table: "UrlEntries",
                 column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LastVisited",
+                table: "UrlEntries",
+                column: "LastVisited",
+                filter: "[LastVisited] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Owner_Active_Created",
+                table: "UrlEntries",
+                columns: new[] { "OwnerId", "IsActive", "CreatedAt" },
+                descending: new[] { false, false, true });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OwnerId",
+                table: "UrlEntries",
+                column: "OwnerId",
+                filter: "[OwnerId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShortCode",

@@ -54,6 +54,8 @@ public class UrlsController : ControllerBase
 
             var result = await _service.CreateShortUrlAsync(request, cancellationToken).ConfigureAwait(false);
 
+            PopulateShortUrl(result);
+
             _logger.LogInformation("Short URL created successfully with ID: {Id}", result.Id);
 
             return CreatedAtAction(nameof(GetUrlById), new { id = result.Id }, result);
@@ -128,6 +130,8 @@ public class UrlsController : ControllerBase
                 });
             }
 
+            PopulateShortUrl(result);
+
             return Ok(result);
         }
         catch (Exception ex)
@@ -189,6 +193,8 @@ public class UrlsController : ControllerBase
                 });
             }
 
+            PopulateShortUrl(result);
+
             return Ok(result);
         }
         catch (Exception ex)
@@ -204,66 +210,7 @@ public class UrlsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get the original URL by custom alias
-    /// </summary>
-    /// <param name="customAlias">The custom alias</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The URL response with updated access count</returns>
-    /// <response code="200">URL found</response>
-    /// <response code="404">URL not found</response>
-    /// <response code="500">Internal server error</response>
-    [HttpGet("alias/{customAlias}")]
-    [ProducesResponseType(typeof(UrlShortenerResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetUrlByCustomAlias(
-        [FromRoute] string customAlias,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(customAlias))
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Title = "Bad Request",
-                    Detail = "Custom alias cannot be empty",
-                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
-                });
-            }
 
-            _logger.LogInformation("Retrieving URL by custom alias: {CustomAlias}", customAlias);
-
-            var result = await _service.GetUrlByCustomAliasAsync(customAlias, cancellationToken).ConfigureAwait(false);
-
-            if (result == null)
-            {
-                _logger.LogWarning("URL not found with custom alias: {CustomAlias}", customAlias);
-                return NotFound(new ProblemDetails
-                {
-                    Status = StatusCodes.Status404NotFound,
-                    Title = "Not Found",
-                    Detail = $"URL entry with custom alias '{customAlias}' not found or has expired",
-                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4"
-                });
-            }
-
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving URL by custom alias: {CustomAlias}", customAlias);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
-            {
-                Status = StatusCodes.Status500InternalServerError,
-                Title = "Internal Server Error",
-                Detail = "An unexpected error occurred while retrieving the URL",
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
-            });
-        }
-    }
 
     /// <summary>
     /// Get all shortened URLs with pagination
@@ -289,6 +236,8 @@ public class UrlsController : ControllerBase
             _logger.LogInformation("Retrieving all URLs - Page: {PageNumber}, Size: {PageSize}", pageNumber, pageSize);
 
             var result = await _service.GetAllUrlsAsync(pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
+
+            PopulateShortUrls(result);
 
             return Ok(result);
         }
@@ -360,6 +309,8 @@ public class UrlsController : ControllerBase
                     Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4"
                 });
             }
+
+            PopulateShortUrl(result);
 
             _logger.LogInformation("URL updated successfully with ID: {Id}", id);
 
@@ -438,6 +389,29 @@ public class UrlsController : ControllerBase
                 Detail = "An unexpected error occurred while deleting the URL",
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
             });
+        }
+    }
+
+    private void PopulateShortUrl(UrlShortenerResponse? response)
+    {
+        if (response == null) return;
+        var request = HttpContext?.Request;
+        if (request != null)
+        {
+            response.ShortUrl = $"{request.Scheme}://{request.Host}/api/urls/shortcode/{response.ShortCode}";
+        }
+        else
+        {
+            response.ShortUrl = $"http://localhost/api/urls/shortcode/{response.ShortCode}";
+        }
+    }
+
+    private void PopulateShortUrls(PaginatedResponse<UrlShortenerResponse>? response)
+    {
+        if (response?.Items == null) return;
+        foreach (var item in response.Items)
+        {
+            PopulateShortUrl(item);
         }
     }
 }

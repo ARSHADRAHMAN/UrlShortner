@@ -29,8 +29,10 @@ public class UrlShortenerServiceTests
             OriginalUrl = "https://www.example.com/very/long/url"
         };
 
+
+
         _mockRepository
-            .Setup(r => r.GetByCustomAliasAsync(It.IsAny<string>(), default))
+            .Setup(r => r.GetByOriginalUrlAsync(It.IsAny<string>(), default))
             .ReturnsAsync((UrlShortenerEntry?)null);
 
         _mockRepository
@@ -60,68 +62,38 @@ public class UrlShortenerServiceTests
     }
 
     [Fact]
-    public async Task CreateShortUrlAsync_WithCustomAlias_ShouldUseAliasAsShortCode()
+    public async Task CreateShortUrlAsync_WithDuplicateOriginalUrl_ShouldReturnExistingUrl()
     {
         // Arrange
-        var customAlias = "myalias";
+        var originalUrl = "https://www.example.com/duplicate";
         var request = new CreateUrlRequest
         {
-            OriginalUrl = "https://www.example.com",
-            CustomAlias = customAlias
+            OriginalUrl = originalUrl
+        };
+
+        var existingEntry = new UrlShortenerEntry
+        {
+            Id = Guid.NewGuid(),
+            OriginalUrl = originalUrl,
+            ShortCode = "exist1",
+            IsActive = true
         };
 
         _mockRepository
-            .Setup(r => r.GetByCustomAliasAsync(customAlias, default))
-            .ReturnsAsync((UrlShortenerEntry?)null);
-
-        _mockRepository
-            .Setup(r => r.CreateAsync(It.IsAny<UrlShortenerEntry>(), default))
-            .ReturnsAsync((UrlShortenerEntry entry, CancellationToken _) =>
-            {
-                entry.Id = Guid.NewGuid();
-                entry.CreatedAt = DateTime.UtcNow;
-                entry.UpdatedAt = DateTime.UtcNow;
-                return entry;
-            });
+            .Setup(r => r.GetByOriginalUrlAsync(originalUrl, default))
+            .ReturnsAsync(existingEntry);
 
         // Act
         var result = await _service.CreateShortUrlAsync(request);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(customAlias, result.ShortCode);
-        Assert.Equal(customAlias, result.CustomAlias);
+        Assert.Equal(existingEntry.Id, result.Id);
+        Assert.Equal(existingEntry.ShortCode, result.ShortCode);
+        _mockRepository.Verify(r => r.CreateAsync(It.IsAny<UrlShortenerEntry>(), default), Times.Never);
     }
 
-    [Fact]
-    public async Task CreateShortUrlAsync_WithExistingCustomAlias_ShouldThrowInvalidOperationException()
-    {
-        // Arrange
-        var customAlias = "existing";
-        var request = new CreateUrlRequest
-        {
-            OriginalUrl = "https://www.example.com",
-            CustomAlias = customAlias
-        };
 
-        var existingEntry = new UrlShortenerEntry
-        {
-            Id = Guid.NewGuid(),
-            OriginalUrl = "https://other.com",
-            ShortCode = customAlias,
-            CustomAlias = customAlias
-        };
-
-        _mockRepository
-            .Setup(r => r.GetByCustomAliasAsync(customAlias, default))
-            .ReturnsAsync(existingEntry);
-
-        // Act & Assert
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _service.CreateShortUrlAsync(request));
-
-        Assert.Contains("already in use", ex.Message);
-    }
 
     [Fact]
     public async Task CreateShortUrlAsync_WithNullRequest_ShouldThrowArgumentNullException()
@@ -145,8 +117,7 @@ public class UrlShortenerServiceTests
             Id = id,
             OriginalUrl = "https://www.example.com",
             ShortCode = "abc123",
-            IsActive = true,
-            ExpiresAt = null
+            IsActive = true
         };
 
         _mockRepository
@@ -177,30 +148,7 @@ public class UrlShortenerServiceTests
         Assert.Null(result);
     }
 
-    [Fact]
-    public async Task GetUrlByIdAsync_WithExpiredUrl_ShouldReturnNull()
-    {
-        // Arrange
-        var id = Guid.NewGuid();
-        var expiredEntry = new UrlShortenerEntry
-        {
-            Id = id,
-            OriginalUrl = "https://www.example.com",
-            ShortCode = "abc123",
-            IsActive = true,
-            ExpiresAt = DateTime.UtcNow.AddHours(-1)
-        };
 
-        _mockRepository
-            .Setup(r => r.GetByIdAsync(id, default))
-            .ReturnsAsync(expiredEntry);
-
-        // Act
-        var result = await _service.GetUrlByIdAsync(id);
-
-        // Assert
-        Assert.Null(result);
-    }
 
     #endregion
 
@@ -217,7 +165,6 @@ public class UrlShortenerServiceTests
             OriginalUrl = "https://www.example.com",
             ShortCode = shortCode,
             IsActive = true,
-            ExpiresAt = null,
             ClickCount = 5
         };
 
@@ -265,46 +212,13 @@ public class UrlShortenerServiceTests
     public async Task GetUrlByShortCodeAsync_WithNullCode_ShouldThrowArgumentException()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(
+        await Assert.ThrowsAnyAsync<ArgumentException>(
             () => _service.GetUrlByShortCodeAsync(null!));
     }
 
     #endregion
 
-    #region GetUrlByCustomAliasAsync Tests
 
-    [Fact]
-    public async Task GetUrlByCustomAliasAsync_WithValidAlias_ShouldIncrementAccessCount()
-    {
-        // Arrange
-        var alias = "myalias";
-        var entry = new UrlShortenerEntry
-        {
-            Id = Guid.NewGuid(),
-            OriginalUrl = "https://www.example.com",
-            ShortCode = "code1",
-            CustomAlias = alias,
-            IsActive = true,
-            ExpiresAt = null
-        };
-
-        _mockRepository
-            .Setup(r => r.GetByCustomAliasAsync(alias, default))
-            .ReturnsAsync(entry);
-
-        _mockRepository
-            .Setup(r => r.IncrementAccessCountAsync(entry.Id, default))
-            .ReturnsAsync(true);
-
-        // Act
-        var result = await _service.GetUrlByCustomAliasAsync(alias);
-
-        // Assert
-        Assert.NotNull(result);
-        _mockRepository.Verify(r => r.IncrementAccessCountAsync(entry.Id, default), Times.Once);
-    }
-
-    #endregion
 
     #region GetAllUrlsAsync Tests
 
@@ -319,16 +233,14 @@ public class UrlShortenerServiceTests
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://example1.com",
                 ShortCode = "code1",
-                IsActive = true,
-                ExpiresAt = null
+                IsActive = true
             },
             new UrlShortenerEntry
             {
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://example2.com",
                 ShortCode = "code2",
-                IsActive = true,
-                ExpiresAt = null
+                IsActive = true
             }
         };
 

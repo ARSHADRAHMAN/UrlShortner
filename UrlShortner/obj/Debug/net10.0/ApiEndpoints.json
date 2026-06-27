@@ -213,44 +213,6 @@
   },
   {
     "ContainingType": "UrlShortner.Controllers.UrlsController",
-    "Method": "GetUrlByCustomAlias",
-    "RelativePath": "api/Urls/alias/{customAlias}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "customAlias",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "UrlShortner.Models.Responses.UrlShortenerResponse",
-        "MediaTypes": [
-          "application/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "application/json"
-        ],
-        "StatusCode": 404
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "application/json"
-        ],
-        "StatusCode": 500
-      }
-    ]
-  },
-  {
-    "ContainingType": "UrlShortner.Controllers.UrlsController",
     "Method": "GetUrlByShortCode",
     "RelativePath": "api/Urls/shortcode/{shortCode}",
     "HttpMethod": "GET",

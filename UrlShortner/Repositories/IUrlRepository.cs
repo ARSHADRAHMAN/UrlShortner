@@ -33,12 +33,14 @@ public interface IUrlRepository
     Task<UrlShortenerEntry?> GetByShortCodeAsync(string shortCode, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Get a URL entry by custom alias asynchronously
+    /// Get a URL entry by its original URL asynchronously
     /// </summary>
-    /// <param name="customAlias">The custom alias</param>
+    /// <param name="originalUrl">The original long URL</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>The URL entry if found; otherwise null</returns>
-    Task<UrlShortenerEntry?> GetByCustomAliasAsync(string customAlias, CancellationToken cancellationToken = default);
+    Task<UrlShortenerEntry?> GetByOriginalUrlAsync(string originalUrl, CancellationToken cancellationToken = default);
+
+
 
     /// <summary>
     /// Get all URL entries asynchronously with pagination

@@ -12,8 +12,8 @@ using UrlShortner.Data;
 namespace UrlShortner.Data.Migrations
 {
     [DbContext(typeof(UrlShortenerDbContext))]
-    [Migration("20260627025559_AddAnalyticsAndOwnershipFeatures")]
-    partial class AddAnalyticsAndOwnershipFeatures
+    [Migration("20260627052056_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,16 +40,9 @@ namespace UrlShortner.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("CustomAlias")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("ExpiresAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -87,15 +80,6 @@ namespace UrlShortner.Data.Migrations
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("IX_CreatedAt");
 
-                    b.HasIndex("CustomAlias")
-                        .IsUnique()
-                        .HasDatabaseName("IX_CustomAlias")
-                        .HasFilter("[CustomAlias] IS NOT NULL");
-
-                    b.HasIndex("ExpiresAt")
-                        .HasDatabaseName("IX_ExpiresAt")
-                        .HasFilter("[ExpiresAt] IS NOT NULL");
-
                     b.HasIndex("IsActive")
                         .HasDatabaseName("IX_IsActive");
 
@@ -110,10 +94,6 @@ namespace UrlShortner.Data.Migrations
                     b.HasIndex("ShortCode")
                         .IsUnique()
                         .HasDatabaseName("IX_ShortCode");
-
-                    b.HasIndex("IsActive", "ExpiresAt")
-                        .HasDatabaseName("IX_Active_Expiration")
-                        .HasFilter("[IsActive] = 1");
 
                     b.HasIndex("OwnerId", "IsActive", "CreatedAt")
                         .IsDescending(false, false, true)

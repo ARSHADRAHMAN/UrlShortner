@@ -141,43 +141,8 @@ public class UrlRepositoryTests
     public async Task GetByShortCodeAsync_WithNullOrEmptyShortCode_ShouldThrowArgumentException()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.GetByShortCodeAsync(null!));
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.GetByShortCodeAsync(string.Empty));
-    }
-
-    #endregion
-
-    #region GetByCustomAliasAsync Tests
-
-    [Fact]
-    public async Task GetByCustomAliasAsync_WithValidAlias_ShouldReturnEntry()
-    {
-        // Arrange
-        var alias = "myalias";
-        var entry = new UrlShortenerEntry
-        {
-            OriginalUrl = "https://www.example.com",
-            ShortCode = "code1",
-            CustomAlias = alias
-        };
-        await _repository.CreateAsync(entry);
-
-        // Act
-        var result = await _repository.GetByCustomAliasAsync(alias);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(alias, result.CustomAlias);
-    }
-
-    [Fact]
-    public async Task GetByCustomAliasAsync_WithInvalidAlias_ShouldReturnNull()
-    {
-        // Act
-        var result = await _repository.GetByCustomAliasAsync("nonexistent");
-
-        // Assert
-        Assert.Null(result);
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => _repository.GetByShortCodeAsync(null!));
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => _repository.GetByShortCodeAsync(string.Empty));
     }
 
     #endregion
