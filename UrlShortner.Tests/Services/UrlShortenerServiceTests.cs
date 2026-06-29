@@ -75,8 +75,7 @@ public class UrlShortenerServiceTests
         {
             Id = Guid.NewGuid(),
             OriginalUrl = originalUrl,
-            ShortCode = "exist1",
-            IsActive = true
+            ShortCode = "exist1"
         };
 
         _mockRepository
@@ -116,8 +115,7 @@ public class UrlShortenerServiceTests
         {
             Id = id,
             OriginalUrl = "https://www.example.com",
-            ShortCode = "abc123",
-            IsActive = true
+            ShortCode = "abc123"
         };
 
         _mockRepository
@@ -164,7 +162,6 @@ public class UrlShortenerServiceTests
             Id = Guid.NewGuid(),
             OriginalUrl = "https://www.example.com",
             ShortCode = shortCode,
-            IsActive = true,
             ClickCount = 5
         };
 
@@ -184,29 +181,7 @@ public class UrlShortenerServiceTests
         _mockRepository.Verify(r => r.UpdateAsync(It.IsAny<UrlShortenerEntry>(), default), Times.Once);
     }
 
-    [Fact]
-    public async Task GetUrlByShortCodeAsync_WithInactiveUrl_ShouldReturnNull()
-    {
-        // Arrange
-        var shortCode = "inactive";
-        var entry = new UrlShortenerEntry
-        {
-            Id = Guid.NewGuid(),
-            OriginalUrl = "https://www.example.com",
-            ShortCode = shortCode,
-            IsActive = false
-        };
 
-        _mockRepository
-            .Setup(r => r.GetByShortCodeAsync(shortCode, default))
-            .ReturnsAsync(entry);
-
-        // Act
-        var result = await _service.GetUrlByShortCodeAsync(shortCode);
-
-        // Assert
-        Assert.Null(result);
-    }
 
     [Fact]
     public async Task GetUrlByShortCodeAsync_WithNullCode_ShouldThrowArgumentException()
@@ -232,15 +207,13 @@ public class UrlShortenerServiceTests
             {
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://example1.com",
-                ShortCode = "code1",
-                IsActive = true
+                ShortCode = "code1"
             },
             new UrlShortenerEntry
             {
                 Id = Guid.NewGuid(),
                 OriginalUrl = "https://example2.com",
-                ShortCode = "code2",
-                IsActive = true
+                ShortCode = "code2"
             }
         };
 

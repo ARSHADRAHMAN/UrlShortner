@@ -36,7 +36,6 @@ public class UrlRepositoryTests
         Assert.NotEqual(DateTime.MinValue, result.CreatedAt);
         Assert.NotEqual(DateTime.MinValue, result.UpdatedAt);
         Assert.Equal(0, result.ClickCount);
-        Assert.True(result.IsActive);
     }
 
     [Fact]

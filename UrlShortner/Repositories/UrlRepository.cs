@@ -112,7 +112,6 @@ public class UrlRepository : IUrlRepository
             existingEntry.ClickCount = entry.ClickCount;
             existingEntry.LastVisited = entry.LastVisited;
             existingEntry.UpdatedAt = DateTime.UtcNow;
-            existingEntry.IsActive = entry.IsActive;
 
             return existingEntry;
         }

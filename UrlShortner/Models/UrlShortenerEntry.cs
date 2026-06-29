@@ -46,11 +46,7 @@ public class UrlShortenerEntry
 
 
 
-    /// <summary>
-    /// Whether this entry is active/enabled
-    /// Can be soft-deleted by setting to false
-    /// </summary>
-    public bool IsActive { get; set; } = true;
+
 
     /// <summary>
     /// User/owner ID who created this URL (optional, for multi-tenant scenarios)
@@ -64,10 +60,7 @@ public class UrlShortenerEntry
 
     // Computed properties
 
-    /// <summary>
-    /// Whether this URL is accessible (active, and not soft-deleted)
-    /// </summary>
-    public bool IsAccessible => IsActive;
+
 
     /// <summary>
     /// Age of this shortened URL in days
@@ -89,31 +82,12 @@ public class UrlShortenerEntry
     /// </summary>
     public void RecordClick()
     {
-        if (!IsAccessible)
-            throw new InvalidOperationException("Cannot record click on inactive or expired URL");
-
         ClickCount++;
         LastVisited = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
 
-    /// <summary>
-    /// Soft-delete this URL entry by marking it inactive
-    /// </summary>
-    public void Deactivate()
-    {
-        IsActive = false;
-        UpdatedAt = DateTime.UtcNow;
-    }
 
-    /// <summary>
-    /// Reactivate a previously deactivated URL
-    /// </summary>
-    public void Reactivate()
-    {
-        IsActive = true;
-        UpdatedAt = DateTime.UtcNow;
-    }
 
 
 
@@ -130,12 +104,7 @@ public class UrlShortenerEntry
         UpdatedAt = DateTime.UtcNow;
     }
 
-    /// <summary>
-    /// Determine if this URL is available for use
-    /// (not expired, active, and not soft-deleted)
-    /// </summary>
-    /// <returns>True if URL can be accessed, false otherwise</returns>
-    public bool CanBeAccessed() => IsAccessible;
+
 
     /// <summary>
     /// Get analytics snapshot for this URL

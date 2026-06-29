@@ -37,8 +37,7 @@ public static class DbInitializer
                 ShortCode = "ghmdot",
                 ClickCount = 42,
                 CreatedAt = DateTime.UtcNow.AddDays(-30),
-                UpdatedAt = DateTime.UtcNow.AddDays(-30),
-                IsActive = true
+                UpdatedAt = DateTime.UtcNow.AddDays(-30)
             },
             new UrlShortenerEntry
             {
@@ -47,8 +46,7 @@ public static class DbInitializer
                 ShortCode = "msdn10",
                 ClickCount = 28,
                 CreatedAt = DateTime.UtcNow.AddDays(-15),
-                UpdatedAt = DateTime.UtcNow.AddDays(-15),
-                IsActive = true
+                UpdatedAt = DateTime.UtcNow.AddDays(-15)
             },
             new UrlShortenerEntry
             {
@@ -57,8 +55,7 @@ public static class DbInitializer
                 ShortCode = "aspnet",
                 ClickCount = 156,
                 CreatedAt = DateTime.UtcNow.AddDays(-60),
-                UpdatedAt = DateTime.UtcNow.AddDays(-5),
-                IsActive = true
+                UpdatedAt = DateTime.UtcNow.AddDays(-5)
             },
             new UrlShortenerEntry
             {
@@ -67,8 +64,7 @@ public static class DbInitializer
                 ShortCode = "tmpurl",
                 ClickCount = 3,
                 CreatedAt = DateTime.UtcNow.AddHours(-2),
-                UpdatedAt = DateTime.UtcNow.AddHours(-2),
-                IsActive = true
+                UpdatedAt = DateTime.UtcNow.AddHours(-2)
             }
         };
 

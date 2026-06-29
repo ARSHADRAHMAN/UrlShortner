@@ -1752,3 +1752,13 @@ OFFSET @p ROWS FETCH NEXT @p0 ROWS ONLY {"EventId":{"Id":20101,"Name":"Microsoft
 2026-06-27 11:20:22.470 +05:30 [INF] Executed endpoint 'UrlShortner.Controllers.UrlsController.GetAllUrls (UrlShortner)' {"EventId":{"Id":1,"Name":"ExecutedEndpoint"},"SourceContext":"Microsoft.AspNetCore.Routing.EndpointMiddleware","RequestId":"0HNMK1UG2LIR8:0000002B","RequestPath":"/api/Urls","ConnectionId":"0HNMK1UG2LIR8","Application":"UrlShortener","Environment":"Development"}
 2026-06-27 11:20:22.479 +05:30 [INF] Outgoing response: 200 /api/Urls - Execution time: 145.4168ms [CorrelationId: 0HNMK1UG2LIR8:0000002B] {"SourceContext":"UrlShortner.Middleware.GlobalExceptionMiddleware","RequestId":"0HNMK1UG2LIR8:0000002B","RequestPath":"/api/Urls","ConnectionId":"0HNMK1UG2LIR8","Application":"UrlShortener","Environment":"Development"}
 2026-06-27 11:20:22.487 +05:30 [INF] Request finished HTTP/2 GET https://localhost:7254/api/Urls?pageNumber=1&pageSize=10 - 200 null application/json; charset=utf-8 180.3724ms {"EventId":{"Id":2},"SourceContext":"Microsoft.AspNetCore.Hosting.Diagnostics","RequestId":"0HNMK1UG2LIR8:0000002B","RequestPath":"/api/Urls","ConnectionId":"0HNMK1UG2LIR8","Application":"UrlShortener","Environment":"Development"}
+2026-06-27 12:56:55.814 +05:30 [INF] Starting UrlShortener application... {"Application":"UrlShortener","Environment":"Development"}
+2026-06-27 12:56:55.916 +05:30 [FTL] Application terminated unexpectedly {"Application":"UrlShortener","Environment":"Development"}
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner\Program.cs:line 88

@@ -61,9 +61,7 @@ public class UrlShortenerDbContext : DbContext
             .IsRequired()
             .HasDefaultValue(0);
 
-        urlEntry.Property(x => x.IsActive)
-            .IsRequired()
-            .HasDefaultValue(true);
+
 
 
 
@@ -84,8 +82,7 @@ public class UrlShortenerDbContext : DbContext
 
 
 
-        urlEntry.HasIndex(x => x.IsActive)
-            .HasDatabaseName("IX_IsActive");
+
 
         urlEntry.HasIndex(x => x.ClickCount)
             .HasDatabaseName("IX_ClickCount")
@@ -100,9 +97,9 @@ public class UrlShortenerDbContext : DbContext
             .HasDatabaseName("IX_OwnerId");
 
         // Composite indexes for common query patterns
-        urlEntry.HasIndex(x => new { x.OwnerId, x.IsActive, x.CreatedAt })
-            .HasDatabaseName("IX_Owner_Active_Created")
-            .IsDescending(false, false, true); // Descending on CreatedAt for newest first
+        urlEntry.HasIndex(x => new { x.OwnerId, x.CreatedAt })
+            .HasDatabaseName("IX_Owner_Created")
+            .IsDescending(false, true); // Descending on CreatedAt for newest first
 
 
 

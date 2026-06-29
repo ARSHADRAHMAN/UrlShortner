@@ -83,9 +83,8 @@ public class UrlShortenerService : IUrlShortenerService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // Check if the original URL already exists
         var existingEntry = await _repository.GetByOriginalUrlAsync(request.OriginalUrl, cancellationToken).ConfigureAwait(false);
-        if (existingEntry != null && existingEntry.IsActive)
+        if (existingEntry != null)
         {
             return MapToResponse(existingEntry);
         }
@@ -102,8 +101,7 @@ public class UrlShortenerService : IUrlShortenerService
         {
             OriginalUrl = request.OriginalUrl,
             ShortCode = shortCode,
-            ClickCount = 0,
-            IsActive = true
+            ClickCount = 0
         };
 
         var createdEntry = await _repository.CreateAsync(entry, cancellationToken).ConfigureAwait(false);
@@ -129,7 +127,7 @@ public class UrlShortenerService : IUrlShortenerService
 
         var entry = await _repository.GetByShortCodeAsync(shortCode, cancellationToken).ConfigureAwait(false);
 
-        if (entry == null || !entry.IsActive)
+        if (entry == null)
         {
             return null;
         }
@@ -152,7 +150,6 @@ public class UrlShortenerService : IUrlShortenerService
         var (entries, totalCount) = await _repository.GetAllAsync(pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
 
         var responses = entries
-            .Where(x => x.IsActive)
             .Select(MapToResponse)
             .ToList();
 
@@ -220,8 +217,7 @@ public class UrlShortenerService : IUrlShortenerService
             ClickCount = entry.ClickCount,
             LastVisited = entry.LastVisited,
             CreatedAt = entry.CreatedAt,
-            UpdatedAt = entry.UpdatedAt,
-            IsActive = entry.IsActive
+            UpdatedAt = entry.UpdatedAt
         };
     }
 }

@@ -107,7 +107,6 @@ public class EfCoreUrlRepository : IUrlRepository
         existingEntry.ClickCount = entry.ClickCount;
         existingEntry.LastVisited = entry.LastVisited;
         existingEntry.UpdatedAt = DateTime.UtcNow;
-        existingEntry.IsActive = entry.IsActive;
 
         _dbContext.UrlEntries.Update(existingEntry);
         await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

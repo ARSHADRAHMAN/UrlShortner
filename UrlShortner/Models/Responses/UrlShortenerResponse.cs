@@ -45,10 +45,7 @@ public class UrlShortenerResponse
     /// </summary>
     public DateTime UpdatedAt { get; set; }
 
-    /// <summary>
-    /// Whether this entry is active
-    /// </summary>
-    public bool IsActive { get; set; }
+
 }
 
 /// <summary>
