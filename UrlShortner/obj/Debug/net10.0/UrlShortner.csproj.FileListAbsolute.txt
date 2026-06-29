@@ -207,3 +207,4 @@ C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner\obj\Debug\net
 C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\jewri\Downloads\ShaikArshadRahman\UrlShortner\UrlShortner\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
