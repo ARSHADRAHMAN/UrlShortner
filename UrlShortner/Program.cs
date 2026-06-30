@@ -61,6 +61,17 @@ try
             options.UseSqlServer(connectionString));
     }
 
+    // Register CORS policy
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    });
+
     // Register repositories and services
     // Using EF Core implementation for persistence
     builder.Services.AddScoped<IUrlRepository, EfCoreUrlRepository>();
@@ -89,6 +100,9 @@ try
 
     // Add global exception middleware
     app.UseGlobalExceptionMiddleware();
+
+    // Enable CORS middleware
+    app.UseCors("AllowFrontend");
 
     // Apply pending migrations and create database if it doesn't exist
     using (var scope = app.Services.CreateScope())

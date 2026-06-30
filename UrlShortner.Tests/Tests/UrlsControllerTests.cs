@@ -8,7 +8,7 @@ using UrlShortner.Models.Requests;
 using UrlShortner.Models.Responses;
 using UrlShortner.Services;
 
-namespace UrlShortner.Tests.Controllers;
+namespace UrlShortner.Tests.Tests;
 
 public class UrlsControllerTests
 {
