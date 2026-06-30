@@ -2,7 +2,7 @@ using Xunit;
 using UrlShortner.Models;
 using UrlShortner.Repositories;
 
-namespace UrlShortner.Tests.Repositories;
+namespace UrlShortner.Tests.Tests;
 
 public class UrlRepositoryTests
 {

@@ -4,7 +4,7 @@ using UrlShortner.Data;
 using UrlShortner.Models;
 using UrlShortner.Repositories;
 
-namespace UrlShortner.Tests.Repositories;
+namespace UrlShortner.Tests.Tests;
 
 /// <summary>
 /// Integration tests for EfCoreUrlRepository

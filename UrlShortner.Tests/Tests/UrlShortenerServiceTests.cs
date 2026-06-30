@@ -5,7 +5,7 @@ using UrlShortner.Models.Requests;
 using UrlShortner.Repositories;
 using UrlShortner.Services;
 
-namespace UrlShortner.Tests.Services;
+namespace UrlShortner.Tests.Tests;
 
 public class UrlShortenerServiceTests
 {
